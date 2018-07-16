@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>register</title>
+    <link rel="stylesheet" href="/static/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/static/css/book_css.css">
+    <style>
+        .error {
+            color: red;
+        }
+    </style>
+
+</head>
+<body>
+<div class="index">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4 col-md-offset-2">
+                <form action="" method="post" novalidate>
+                    {% csrf_token %}
+                    {% for field in form %}
+                        <div class="form-group">
+                            <label for="">{{ field.label }}</label>
+                            {{ field }} <span class="error pull-right">{{ field.errors.0 }}</span>
+                            {% if field.label == "R pwd" %}
+                                <span class="error pull-right">{{ g_error|default_if_none:"" }}</span>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+
+                    <input type="submit" class="btn btn-default btn-sm">
+                </form>
+            </div>
+        </div>
+
+    </div>
+</div>
+</body>
+</html>

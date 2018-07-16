@@ -1,0 +1,39 @@
+.desc {
+    text-align: justify;
+}
+
+.info {
+    margin-top: 10px;
+}
+
+#blog_title{
+    color: white;
+}
+
+.logo{
+    background-color: white;
+}
+
+/*.bac{*/
+    /*background: url("/static/img/bac.jpg") no-repeat center 0;*/
+    /*background-size: cover;*/
+/*}*/
+
+#site_name{
+    font-size: 30px;
+    color: #19b9e7;
+}
+
+.font_comment{
+    margin-top: 20px;
+}
+
+input.author{
+    background-image: url("/static/img/icon_form.gif");
+    background-repeat: no-repeat;
+    border: 1px solid #ccc;
+    padding: 4px 4px 4px 30px;
+    width: 300px;
+    font-size: 13px;
+	background-position: 3px -3px;
+}

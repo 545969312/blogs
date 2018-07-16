@@ -1,0 +1,163 @@
+{% extends 'index.html' %}
+
+
+{% block content %}
+    {% csrf_token %}
+    <div class="container-fluid bac">
+        <div class="row">
+            {% load my_tags %}
+            {% get_query_data username %}
+            <div class="col-md-9">
+                <div class="article_list">
+                    {{ article_obj.content|safe }}
+                </div>
+                <hr>
+                <div>
+                    <button class="btn btn-success suggest praise" type="button">
+                        点赞 <span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span>
+                        <span class="badge">{{ article_obj.up_count }}</span>
+                    </button>
+
+                    <button class="btn btn-danger suggest despise" type="button">
+                        鄙视 <span class="glyphicon glyphicon-thumbs-down" aria-hidden="true"></span>
+                        <span class="badge">{{ article_obj.down_count }}</span>
+                    </button>
+                </div>
+
+                <div class="handle" style="color: red"></div>
+
+                <div>
+                    <p>评论列表</p>
+                    <table class="table table-hover table-striped table_sty">
+                        {% for comment in comment_list %}
+                            <thead>
+                            <tr class="success">
+                                <th>#{{ forloop.counter }}楼</th>
+                                <th>{{ comment.create_time|date:"Y-m-d H:i" }}</th>
+                                <th>{{ comment.user.username }}</th>
+                                <th><a href="javascript:void(0)" class="reply_btn" comment_user="{{ comment.user.username }}" comment_id="{{ comment.pk }}">回复</a></th>
+                                <th><a href="">删除</a></th>
+                            </tr>
+                            </thead>
+
+                            <tbody>
+                            {% if comment.parent_comment_id %}
+                            <tr>
+                                <td class="info">@{{ comment.parent_comment.user }}:{{ comment.parent_comment.content }}</td>
+                            </tr>
+                            {% endif %}
+
+                            <tr>
+                                <td>{{ comment.content }}</td>
+                            </tr>
+                            </tbody>
+                        {% endfor %}
+                    </table>
+
+                    <div class="font_comment">
+                        <span class="glyphicon glyphicon-edit"></span><span style="font-size: 20px">发表评论</span>
+                        <p>昵称：<input type="text" id="tbCommentAuthor" class="author" disabled="disabled" size="50"
+                                     value="{{ request.user.username }}"></p>
+                        <div>
+                            <textarea name="" id="comment_content" cols="60" rows="10"></textarea>
+                        </div>
+                        <input type="button" value="发表" class="btn btn-success comment_btn">
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+        <script>
+            $(".suggest").click(function () {
+
+                if ('{{ request.user }}') {
+
+                    var _this = $(this).children('.badge');
+                    var is_up = $(this).hasClass('praise');
+                    $.ajax({
+
+                        url: '/suggest/',
+                        type: 'post',
+                        data: {
+                            is_up: is_up,
+                            article_id: '{{ article_obj.pk }}',
+                            csrfmiddlewaretoken: $("[name='csrfmiddlewaretoken']").val()
+                        },
+                        success: function (data) {
+
+                            if (data.state) {
+                                var val = _this.text();
+                                _this.text(parseInt(val) + 1)
+                            } else {
+                                var val = data.handle ? '您已经点过赞了' : '您已经鄙视过了';
+                                $('.handle').html(val);
+                                setTimeout(function () {
+                                    $('.handle').html('');
+                                }, 1000)
+                            }
+                        }
+                    })
+                } else {
+                    location.href = '/login/'
+                }
+
+            });
+
+
+            var p_comment = '';
+            $(".comment_btn").click(function () {
+
+                var content = $("#comment_content").val();
+
+                if(p_comment){
+                    var index=content.indexOf("\n");
+                    content=content.slice(index+1)
+                }
+
+                $.ajax({
+                    url: '/comment/',
+                    type: 'post',
+                    data: {
+                        content: content,
+                        article_id: "{{ article_obj.pk }}",
+                        p_comment: p_comment,
+                        csrfmiddlewaretoken: $("[name='csrfmiddlewaretoken']").val()
+                    },
+                    success: function (data) {
+                        var comment_time = data.timer;
+                        var comment_content = data.content;
+                        var comment_user = '{{ request.user.username }}';
+
+                        var $tr = `
+                            <thead>
+                                <tr>
+                                    <th>${comment_time}</th>
+                                    <th>${comment_user}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>${comment_content}</td>
+                                </tr>
+                            </tbody>
+                        `;
+
+                        $(".table_sty").append($tr);
+
+                        $("#comment_content").val("");
+                    }
+                })
+            });
+
+
+            $(".reply_btn").click(function () {
+                $("#comment_content").focus();
+                var val="@"+$(this).attr("comment_user")+"\n";
+                $("#comment_content").val(val);
+                p_comment=$(this).attr("comment_id")
+            })
+
+        </script>
+{% endblock %}

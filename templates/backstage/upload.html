@@ -1,0 +1,62 @@
+{% extends 'backstage/base.html' %}
+
+{% block title %}
+    <title>upload</title>
+{% endblock %}
+
+{% block css %}
+    <link rel="stylesheet" href="/static/css/reset.css">
+    <link rel="stylesheet" href="/static/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/static/css/base.css">
+{% endblock %}
+{% block base %}
+
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <div class="row">
+
+            <div class="col-md-12">
+
+                <table class="table table-hover table-striped">
+                    <thead>
+                    <tr class="info"><th>已上传文件名称</th></tr>
+                    </thead>
+                    <tbody>
+
+                    {% for foo in file_all %}
+                        <tr>
+                            <td>
+                                {{ foo.file_name }}
+                            </td>
+                        </tr>
+                    {% endfor %}
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-md-3">
+                <form action="" method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <input type="file" name="upload_file">
+
+                    </div>
+                    <input type="submit">
+                    <p style="color: red">{{ ret }}</p>
+                </form>
+
+            </div>
+
+        </div>
+    </div>
+
+{% endblock %}
+
+

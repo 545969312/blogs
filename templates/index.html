@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    {% block title %}
+    <title>index</title>
+    {% endblock %}
+    {% block css %}
+        <link rel="stylesheet" href="/static/css/reset.css">
+        <link rel="stylesheet" href="/static/bootstrap/css/bootstrap.min.css">
+        <link rel="stylesheet" href="/static/css/change.css">
+        <link rel="icon" href="/static/img/icon.jpg" type="image/jpg">
+        <script src="/static/js/jQuery3.min.js"></script>
+        <script src="/static/bootstrap/js/bootstrap.min.js"></script>
+    {% endblock %}
+</head>
+<body>
+
+<nav class="navbar navbar-default">
+    <div class="container-fluid logo">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+            <a href="{% url 'index' %}"><img src="/static/img/logo.png"></a>
+
+            <span style="color: #e33f08">代码改变世界,贫穷限制想象!</span>
+        </div>
+
+    </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+        <ul class="nav navbar-nav">
+            <li class="active"><a href="#">园子</a></li>
+            <li><a href="#">新闻</a></li>
+            <li><a href="#">博问</a></li>
+            <li><a href="#">闪存</a></li>
+            <li><a href="#">小组</a></li>
+            <li><a href="#">收藏</a></li>
+            <li><a href="#">招聘</a></li>
+            <li><a href="#">班级</a></li>
+            <li><a href="#">找找看</a></li>
+
+        </ul>
+
+        <ul class="nav navbar-nav navbar-right">
+            {% if request.user.username %}
+                <li><a href="/{{ request.user.username }}/"><span class="glyphicon glyphicon-user"></span>&nbsp;{{ request.user.username }}</a>
+                </li>
+                <li><a href="{% url 'query_article' %}">我的博客</a></li>
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
+                       aria-expanded="false">个人设置<span class="caret"></span></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="#">修改密码</a></li>
+                        <li><a href="#">个人信息</a></li>
+                        <li role="separator" class="divider"></li>
+                        <li><a href="{% url 'logout' %}">注销</a></li>
+                    </ul>
+                </li>
+
+            {% else %}
+                <li><a href="{% url 'login' %}">登陆</a></li>
+                <li><a href="#">注册</a></li>
+            {% endif %}
+
+
+        </ul>
+    </div><!-- /.navbar-collapse -->
+
+</nav>
+{% block content %}
+<div class="container-fluid bac">
+    <div class="row">
+        {% load my_tags %}
+        {% get_query_data username %}
+
+        <div class="col-md-6">
+
+            <div class="article_list">
+                {% for article in article_list %}
+                 <div class="article_item">
+                      <h5><a href="/article_content/{{ article.nid }}/">{{ article.title }}</a></h5>
+                      <div>
+                          <span class="media-left"><a href="/{{ article.user }}/"><img width="60" height="60" src="/static/img/头像4.jpg" alt=""></a></span>
+
+                          <span class="media-right small desc ">
+                              {{ article.desc }}
+                          </span>
+
+                      </div>
+                      <div class="info small">
+                            <span><a href="/{{ article.user }}/">{{ article.user.username }}</a></span> &nbsp;
+                            发布于 <span>{{ article.create_time|date:'Y-m-d H:i' }}</span>&nbsp;&nbsp;
+                           <span class="glyphicon glyphicon-comment " aria-hidden="true" style="color: gray"></span><a href="">评论({{ article.comment_count }})</a>&nbsp;&nbsp;
+                           <span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span><a href="">点赞({{ article.up_count }})</a>&nbsp;&nbsp;
+                           <span class="glyphicon glyphicon-thumbs-down" aria-hidden="true"></span><a href="">被踩({{ article.down_count }})</a>
+                      </div>
+                 </div>
+                    <hr>
+                {% endfor %}
+            </div>
+
+
+
+        </div>
+        <div class="col-md-3">
+            <div class="panel panel-primary">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Panel title</h3>
+                </div>
+                <div class="panel-body">
+                    Panel content
+                </div>
+            </div>
+
+            <div class="panel panel-danger">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Panel title</h3>
+                </div>
+                <div class="panel-body">
+                    Panel content
+                </div>
+            </div>
+
+            <div class="panel panel-success">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Panel title</h3>
+                </div>
+                <div class="panel-body">
+                    Panel content
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+</body>
+</html>

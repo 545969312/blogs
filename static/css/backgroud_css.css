@@ -1,0 +1,10 @@
+body{
+    background: url("../img/4.gif") no-repeat center 0;
+    background-size: cover;
+    position: relative;
+}
+.index{
+    position: absolute;
+    top: 150px;
+    left: 480px;
+}

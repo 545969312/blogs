@@ -1,0 +1,91 @@
+{% extends 'backstage/base.html' %}
+
+{% block title %}
+    <title>change_article</title>
+{% endblock %}
+
+{% block css %}
+    <link rel="stylesheet" href="/static/css/reset.css">
+    <link rel="stylesheet" href="/static/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/static/css/base.css">
+    <script src="/static/js/jQuery3.min.js"></script>
+{% endblock %}
+{% block base %}
+
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <form action="" method="post">
+                    {% csrf_token %}
+                    <div class="CollapsibleTitle">修改文章</div>
+                    <div>标题</div>
+                    <div class="input-group input-group-sm">
+                        <input type="text" class="form-control" name="title" style="width: 1140px" value="{{ article_obj.title }}">
+                    </div>
+                    <div>内容(Kindeditor编辑器，不支持拖放/粘贴上传图片)</div>
+                    <div>
+
+                        <textarea name="content" id="article_content" cols="30" rows="10">
+                            {{ article_obj.content }}
+                        </textarea>
+                    </div>
+
+                    <div class="CollapsibleTitle">常用分类</div>
+                    <div>
+                        <ul>
+                            {% for cate in category %}
+                                {% if cate == cate_site %}
+                                    <li>{{ cate.title }}<input checked type="radio" name="cate" value="{{ cate.pk }}"></li>
+                                {% else %}
+                                    <li>{{ cate.title }}<input type="radio" name="cate" value="{{ cate.pk }}"></li>
+                                {% endif %}
+
+                            {% endfor %}
+                            <li><a href="">创建新的分类</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="CollapsibleTitle">常用标签</div>
+                    <div>
+                        <ul>
+                            {% for tag in tags %}
+                                {% for foo in tag_site %}
+                                    {% if tag == foo %}
+                                    <li>{{ tag.title }}<input checked type="checkbox" name="tag" value="{{ tag.pk }}"></li>
+                                    {% else %}
+                                    <li>{{ tag.title }}<input type="checkbox" name="tag" value="{{ tag.pk }}"></li>
+                                    {% endif %}
+                                {% endfor %}
+
+                            {% endfor %}
+                            <li><a href="">创建新的标签</a></li>
+                        </ul>
+                    </div>
+
+                    <div></div>
+                    <input type="submit" class="btn btn-success" value="发布">
+                </form>
+            </div>
+        </div>
+    </div>
+    <script charset="utf-8" src="/static/kindeditor/kindeditor-all.js"></script>
+    <script>
+        KindEditor.ready(function (K) {
+            window.editor = K.create('#article_content', {
+                width: 1140,
+                height: 600,
+                resizeType: 0,
+                uploadJson: "/upload/",
+                extraFileUploadParams: {
+                    csrfmiddlewaretoken: $("[name='csrfmiddlewaretoken']").val()
+                },
+                filePostName: "upload_img"
+            });
+        });
+    </script>
+{% endblock %}
+
+
