@@ -7,6 +7,8 @@ from django.db import transaction
 from django.db.models import F
 from bs4 import BeautifulSoup
 from Blogs import settings
+from blog.vcode.vcode import check_code
+from io import BytesIO
 import json
 import os
 
@@ -42,14 +44,28 @@ def index(request, **kwargs):
 
 
 def login(request):
+
     if request.method == "POST":
         user = request.POST.get('user')
         pwd = request.POST.get('pwd')
+        code = request.POST.get('code')
+        if code.upper() != request.session['random_code'].upper():
+            return render(request, 'login.html', {'msg': '验证码错误'})
         user_obj = auth.authenticate(username=user, password=pwd)
         if user_obj:
             auth.login(request, user_obj)
             return redirect(reverse('index'))
+        return render(request, 'login.html', {'msg': '用户名或者密码错误'})
     return render(request, 'login.html')
+
+
+def code(request):  # 生成随机验证码
+
+    img, random_code = check_code()
+    request.session['random_code'] = random_code
+    stream = BytesIO()
+    img.save(stream, 'png')
+    return HttpResponse(stream.getvalue())
 
 
 def logout(request):
@@ -251,3 +267,6 @@ def upload_img(request):
 
     # return HttpResponse(json.dumps(res))
     return JsonResponse(res)
+
+
+

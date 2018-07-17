@@ -26,6 +26,8 @@ urlpatterns = [
     path('suggest/', views.suggest, name='suggest'),
     path('comment/', views.comment, name='comment'),
 
+    path('code/', views.code, name='code'),
+
     path('query_article/', views.query_article, name='query_article'),
     path('add_article/', views.add_article, name='add_article'),
     path('upload/', views.upload, name='upload'),
